@@ -30,10 +30,8 @@ def testGetStarshipsHappyPath(client):
     logging.info('Expecting response code to equal 200')
     assert response.status_code == 200
     fieldValidator = FieldValidator(expectedFields, json.loads(response.text))
-    for fieldName, expectedValue in expectedFields.items():
-        logging.info(f'Expecting response body to contain field {fieldName} of type {expectedValue}')
-        fieldValidator.validateJsonFieldPresence(fieldName)
-        fieldValidator.validateJsonFieldType(fieldName)
+    fieldValidator.validateJsonFieldPresence()
+    fieldValidator.validateJsonFieldType()
 
 
 def testGetStarshipsInvalidId(client):
