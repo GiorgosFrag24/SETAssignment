@@ -34,6 +34,7 @@ def testGetPeopleHappyPath(client):
         fieldValidator.validateJsonFieldType(fieldName)
 
 
+# TODO add validation for the json returned
 def testGetPeopleInvalidId(client):
     invalidIds = ['150', 'abc', '-1']
     for invalidId in invalidIds:
@@ -42,4 +43,15 @@ def testGetPeopleInvalidId(client):
         logging.info('Expecting response code to equal 404')
         assert response.status_code == 404
 
+
+def testGetPeopleMissingId(client):
+    logging.info('Calling GET /people/id/ with no id')
+    response = client.get('/people/')
+    logging.info('Expecting response code to equal 200')
+    assert response.status_code == 200
+    fieldValidator = FieldValidator(expectedFields, json.loads(response.text))
+    for fieldName, expectedValue in expectedFields.items():
+        logging.info(f'Expecting response body to contain field {fieldName} of type {expectedValue}')
+        fieldValidator.validateJsonFieldPresence(fieldName)
+        fieldValidator.validateJsonFieldType(fieldName)
 

@@ -9,7 +9,7 @@ class FieldValidator:
         self.testData = testData
 
     def validateJsonFieldPresence(self, fieldName):
-        logging.info(f'Expecting field {fieldName} to be present in response')
+        #logging.info(f'Expecting field {fieldName} to be present in response')
         assert fieldName in self.testData
 
     def validateJsonFieldType(self, fieldName):
