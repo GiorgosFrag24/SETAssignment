@@ -22,21 +22,21 @@ def isIdValid(Id):
 def getPeople(personId):
     if not isIdValid(personId):
         return jsonify({'detail': 'Not Found'}), 404
-    return openAndLoadJsonFile('data/people.json'), 200
+    return openAndLoadJsonFile('data/dummyData/people.json'), 200
 
 
 @app.route('/planets/<int:planetId>/', methods=['GET'])
 def getPlanets(planetId):
     if not isIdValid(planetId):
         return jsonify({'detail': 'Not Found'}), 404
-    return openAndLoadJsonFile('data/planets.json'), 200
+    return openAndLoadJsonFile('data/dummyData/planets.json'), 200
 
 
 @app.route('/starships/<int:starshipId>/', methods=['GET'])
 def getStarships(starshipId):
     if not isIdValid(starshipId):
         return jsonify({'detail': 'Not Found'}), 404
-    return openAndLoadJsonFile('data/starships.json'), 200
+    return openAndLoadJsonFile('data/dummyData/starships.json'), 200
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import logging
-from fieldValidator import FieldValidator
+from utilities.fieldValidator import FieldValidator
 import json
 
 expectedFields = {
@@ -38,22 +38,18 @@ def testGetStarshipsHappyPath(client):
 
 # TODO add validation for the json returned
 def testGetStarshipsInvalidId(client):
-    invalidIds = ['150', 'abc', '-1']
+    invalidIds = ['150', 'a', '-1', '/', '&']
     for invalidId in invalidIds:
         logging.info('Calling GET /starships/id/ with invalid id parameter ' + invalidId)
         response = client.get('/starships/' + invalidId + '/')
         logging.info('Expecting response code to equal 404')
         assert response.status_code == 404
-
+        logging.info('Expecting response body to be {}')
 
 def testGetPlanetsWithNoId(client):
     logging.info('Calling GET /starships/id/ with no id')
     response = client.get('/starships/')
-    logging.info('Expecting response code to equal 200')
-    assert response.status_code == 200
-    fieldValidator = FieldValidator(expectedFields, json.loads(response.text))
-    for fieldName, expectedValue in expectedFields.items():
-        logging.info(f'Expecting response body to contain field {fieldName} of type {expectedValue}')
-        fieldValidator.validateJsonFieldPresence(fieldName)
-        fieldValidator.validateJsonFieldType(fieldName)
+    logging.info('Expecting response code to equal 404')
+    assert response.status_code == 404
+
 

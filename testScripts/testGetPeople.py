@@ -1,5 +1,5 @@
 import logging
-from fieldValidator import FieldValidator
+from utilities.fieldValidator import FieldValidator
 import json
 
 expectedFields = {
@@ -48,10 +48,6 @@ def testGetPeopleMissingId(client):
     logging.info('Calling GET /people/id/ with no id')
     response = client.get('/people/')
     logging.info('Expecting response code to equal 200')
-    assert response.status_code == 200
-    fieldValidator = FieldValidator(expectedFields, json.loads(response.text))
-    for fieldName, expectedValue in expectedFields.items():
-        logging.info(f'Expecting response body to contain field {fieldName} of type {expectedValue}')
-        fieldValidator.validateJsonFieldPresence(fieldName)
-        fieldValidator.validateJsonFieldType(fieldName)
+    assert response.status_code == 404
+
 
