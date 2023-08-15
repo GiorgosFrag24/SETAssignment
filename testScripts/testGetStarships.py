@@ -36,7 +36,6 @@ def testGetStarshipsHappyPath(client):
         fieldValidator.validateJsonFieldType(fieldName)
 
 
-# TODO add validation for the json returned
 def testGetStarshipsInvalidId(client):
     invalidIds = ['150', 'a', '-1', '/', '&']
     for invalidId in invalidIds:
@@ -44,12 +43,17 @@ def testGetStarshipsInvalidId(client):
         response = client.get('/starships/' + invalidId + '/')
         logging.info('Expecting response code to equal 404')
         assert response.status_code == 404
-        logging.info('Expecting response body to be {}')
+        logging.info('Expecting response message to contain "Not Found" ')
+        assert "Not Found" in response.text
+
 
 def testGetPlanetsWithNoId(client):
     logging.info('Calling GET /starships/id/ with no id')
     response = client.get('/starships/')
     logging.info('Expecting response code to equal 404')
     assert response.status_code == 404
+    logging.info('Expecting response message to contain "Not Found" ')
+    assert "Not Found" in response.text
+
 
 
