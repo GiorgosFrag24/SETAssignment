@@ -23,7 +23,7 @@ expectedFields = {
 
 
 def testGetPeopleHappyPath(client):
-    logging.info('Calling GET /people/1/')
+    logging.info('Calling GET /people/id/ with a valid id')
     response = client.get('/people/1/')
     logging.info('Expecting response code to equal 200')
     assert response.status_code == 200
@@ -34,17 +34,12 @@ def testGetPeopleHappyPath(client):
         fieldValidator.validateJsonFieldType(fieldName)
 
 
-def testGetPeopleNoId(client):
-    logging.info('Calling GET /people/1/')
-    response = client.get('/people/1/')
-    logging.info('Calling GET /people/1/')
-    assert response.status_code == 200
-    logging.info('Successful Response')
-
-
 def testGetPeopleInvalidId(client):
-    logging.info('Fetching the person with id:234')
-    response = client.get('/people/234/')
-    logging.info('Calling GET /people/234/')
-    assert response.status_code == 404
-    logging.info(response.text)
+    invalidIds = ['150', 'abc', '-1']
+    for invalidId in invalidIds:
+        logging.info('Calling GET /people/id/ with invalid id parameter ' + invalidId)
+        response = client.get('/people/' + invalidId + '/')
+        logging.info('Expecting response code to equal 404')
+        assert response.status_code == 404
+
+

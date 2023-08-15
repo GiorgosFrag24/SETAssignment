@@ -27,16 +27,17 @@ def getPeople(personId):
 
 @app.route('/planets/<int:planetId>/', methods=['GET'])
 def getPlanets(planetId):
-    if not isIdValid(planetId) :
+    if not isIdValid(planetId):
         return jsonify({'detail': 'Not Found'}), 404
     return openAndLoadJsonFile('data/planets.json'), 200
 
 
 @app.route('/starships/<int:starshipId>/', methods=['GET'])
 def getStarships(starshipId):
-    if not isIdValid(starshipId) :
+    if not isIdValid(starshipId):
         return jsonify({'detail': 'Not Found'}), 404
     return openAndLoadJsonFile('data/starships.json'), 200
+
 
 if __name__ == '__main__':
     app.run()
