@@ -1,31 +1,42 @@
 import logging
 from flask import Flask, jsonify
+import json
 
 app = Flask(__name__)
-
 logging.basicConfig(filename='server.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
+def openAndLoadJsonFile(filename):
+    f = open(filename)
+    jsonData = json.loads(f.read())
+    return jsonData
+
+
 def isIdValid(Id):
-    if isinstance(int, Id) and Id<100:
+    if isinstance(Id, int) and Id < 100:
         return True
     return False
 
+
 @app.route('/people/<int:personId>/', methods=['GET'])
 def getPeople(personId):
-    if personId > 100:
-        return jsonify({'error': 'Not Found'}), 404
-    else:
-        return jsonify({'name': 'Luke Skywalker', 'height': '172cm'}), 200
+    if not isIdValid(personId):
+        return jsonify({'detail': 'Not Found'}), 404
+    return openAndLoadJsonFile('data/people.json'), 200
 
 
 @app.route('/planets/<int:planetId>/', methods=['GET'])
 def getPlanets(planetId):
-    if planetId > 100:
-        return jsonify({'error': 'Not Found'}), 404
-    else:
-        return jsonify({'name': 'Luke Skywalker', 'height': '172cm'}), 200
+    if not isIdValid(planetId) :
+        return jsonify({'detail': 'Not Found'}), 404
+    return openAndLoadJsonFile('data/planets.json'), 200
 
+
+@app.route('/starships/<int:starshipId>/', methods=['GET'])
+def getStarships(starshipId):
+    if not isIdValid(starshipId) :
+        return jsonify({'detail': 'Not Found'}), 404
+    return openAndLoadJsonFile('data/starships.json'), 200
 
 if __name__ == '__main__':
     app.run()
