@@ -1,41 +1,40 @@
-import logging
+from utilities.httpServerUtilities import *
 from flask import Flask, jsonify
-import json
+
 
 app = Flask(__name__)
-logging.basicConfig(filename='server.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-
-def openAndLoadJsonFile(filename):
-    f = open(filename)
-    jsonData = json.loads(f.read())
-    return jsonData
-
-
-def isIdValid(Id):
-    if isinstance(Id, int) and Id < 100:
-        return True
-    return False
 
 
 @app.route('/people/<int:personId>/', methods=['GET'])
 def getPeople(personId):
+    logger = setUpLogger('httpServer')
+    logger.info(f'Calling GET /people/{personId}/')
     if not isIdValid(personId):
+        logger.info('Status code 404')
         return jsonify({'detail': 'Not Found'}), 404
+    logger.info('Status code 404')
     return openAndLoadJsonFile('data/dummyData/people.json'), 200
 
 
 @app.route('/planets/<int:planetId>/', methods=['GET'])
 def getPlanets(planetId):
+    logger = setUpLogger('httpServer')
+    logger.info(f'Calling GET /planets/{planetId}/')
     if not isIdValid(planetId):
+        logger.info('Status code 404')
         return jsonify({'detail': 'Not Found'}), 404
+    logger.info('Status code 200')
     return openAndLoadJsonFile('data/dummyData/planets.json'), 200
 
 
 @app.route('/starships/<int:starshipId>/', methods=['GET'])
 def getStarships(starshipId):
+    logger = setUpLogger('httpServer')
+    logger.info(f'Calling GET /starships/{starshipId}/')
     if not isIdValid(starshipId):
+        logger.info('Status code 404')
         return jsonify({'detail': 'Not Found'}), 404
+    logger.info('Status code 200')
     return openAndLoadJsonFile('data/dummyData/starships.json'), 200
 
 
