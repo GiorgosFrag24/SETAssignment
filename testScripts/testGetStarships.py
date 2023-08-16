@@ -1,6 +1,8 @@
 import logging
 from utilities.fieldValidator import FieldValidator
 import json
+import time
+import statistics
 
 expectedFields = {
     "name": str,
@@ -24,9 +26,9 @@ expectedFields = {
 }
 
 
-def testGetStarshipsHappyPath(client):
+def testGetStarshipsHappyPath(server):
     logging.info('Calling GET /starships/id/ with a valid id')
-    response = client.get('/starships/1/')
+    response = server.get('/starships/1/')
     logging.info('Expecting response code to equal 200')
     assert response.status_code == 200
     fieldValidator = FieldValidator(expectedFields, json.loads(response.text))
@@ -34,24 +36,39 @@ def testGetStarshipsHappyPath(client):
     fieldValidator.validateJsonFieldType()
 
 
-def testGetStarshipsInvalidId(client):
+def testGetStarshipsInvalidId(server):
     invalidIds = ['150', 'a', '-1', '/', '&']
     for invalidId in invalidIds:
         logging.info('Calling GET /starships/id/ with invalid id parameter ' + invalidId)
-        response = client.get('/starships/' + invalidId + '/')
+        response = server.get('/starships/' + invalidId + '/')
         logging.info('Expecting response code to equal 404')
         assert response.status_code == 404
         logging.info('Expecting response message to contain "Not Found" ')
         assert "Not Found" in response.text
 
 
-def testGetPlanetsWithNoId(client):
+def testGetPlanetsWithNoId(server):
     logging.info('Calling GET /starships/id/ with no id')
-    response = client.get('/starships/')
+    response = server.get('/starships/')
     logging.info('Expecting response code to equal 404')
     assert response.status_code == 404
     logging.info('Expecting response message to contain "Not Found" ')
     assert "Not Found" in response.text
 
 
+def testGetStarshipsWithDelays(serverWithDelay):
+    duration = 60
+    startTime = time.time()
+    responseTimes = []
+    logging.info('Waiting for the continuous access to /starships/ to finish')
+    while time.time() - startTime < duration:
+        startRequestTime = time.time()
+        _ = serverWithDelay.get('/starships/10/')
+        endRequestTime = time.time()
+        responseTime = endRequestTime - startRequestTime
+        responseTimes.append(responseTime)
+    meanResponseTime = statistics.mean(responseTimes)
+    stdDeviation = statistics.stdev(responseTimes)
+    logging.info(f'The mean response time is {meanResponseTime}')
+    logging.info(f'The standard deviation is {stdDeviation}')
 

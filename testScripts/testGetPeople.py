@@ -1,6 +1,8 @@
 import logging
 from utilities.fieldValidator import FieldValidator
 import json
+import time
+import statistics
 
 expectedFields = {
     "name": str,
@@ -22,9 +24,9 @@ expectedFields = {
 }
 
 
-def testGetPeopleHappyPath(client):
+def testGetPeopleHappyPath(server):
     logging.info('Calling GET /people/id/ with a valid id')
-    response = client.get('/people/1/')
+    response = server.get('/people/1/')
     logging.info('Expecting response code to equal 200')
     assert response.status_code == 200
     fieldValidator = FieldValidator(expectedFields, json.loads(response.text))
@@ -32,24 +34,41 @@ def testGetPeopleHappyPath(client):
     fieldValidator.validateJsonFieldType()
 
 
-def testGetPeopleInvalidId(client):
+def testGetPeopleInvalidId(server):
     invalidIds = ['150', 'a', '-1', '/', '&']
     for invalidId in invalidIds:
         logging.info('Calling GET /people/id/ with invalid id parameter ' + invalidId)
-        response = client.get('/people/' + invalidId + '/')
+        response = server.get('/people/' + invalidId + '/')
         logging.info('Expecting response code to equal 404')
         assert response.status_code == 404
         logging.info('Expecting response message to contain "Not Found" ')
         assert "Not Found" in response.text
 
 
-def testGetPeopleMissingId(client):
+def testGetPeopleMissingId(server):
     logging.info('Calling GET /people/id/ with no id')
-    response = client.get('/people/')
+    response = server.get('/people/')
     logging.info('Expecting response code to equal 200')
     assert response.status_code == 404
     logging.info('Expecting response message to contain "Not Found" ')
     assert "Not Found" in response.text
+
+
+def testGetPeopleWithDelays(serverWithDelay):
+    duration = 60
+    startTime = time.time()
+    responseTimes = []
+    logging.info('Waiting for the continuous access to /people/ to finish')
+    while time.time() - startTime < duration:
+        startRequestTime = time.time()
+        _ = serverWithDelay.get('/people/1/')
+        endRequestTime = time.time()
+        responseTime = endRequestTime - startRequestTime
+        responseTimes.append(responseTime)
+    meanResponseTime = statistics.mean(responseTimes)
+    stdDeviation = statistics.stdev(responseTimes)
+    logging.info(f'The mean response time is {meanResponseTime}')
+    logging.info(f'The standard deviation is {stdDeviation}')
 
 
 
